@@ -158,6 +158,8 @@ trilean    dyn_list_resize     (dyn_c* list, const dyn_ushort size);
 dyn_ushort dyn_list_string_len (const dyn_c* list);
 //! Add string representation of a list to str
 void       dyn_list_string_add (const dyn_c* list, dyn_str str);
+//! Create a list containing the characters from the given string.
+void       dyn_list_from_str   (dyn_c* list, dyn_str str);
 /**@}*/
 
 

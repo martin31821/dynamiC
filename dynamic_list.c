@@ -136,6 +136,25 @@ dyn_c* dyn_list_push (dyn_c* list, const dyn_c* element)
 }
 
 /**
+ * Creates a dyn_list from the characters in the given string.
+ * 
+ * @param[in, out] list input has to be of type LIST
+ * @param[in]      str String to use as basis for the list.
+ */
+void dyn_list_from_str (dyn_c* list, dyn_str str) {
+    char c[2];
+    c[1] = '\0';
+    while (*str) {
+        c[0] = *str;
+        dyn_c element;
+        dyn_set_string(&element, c);
+        dyn_list_push(list, &element);
+        dyn_free(&element);
+        str++;
+    }
+}
+
+/**
  * Increses the length value of the list by one and returns a reference to the
  * last NONE element of the list. This reference can be used to move a larger
  * element to the end of a list, without copying.
