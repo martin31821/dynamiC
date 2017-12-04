@@ -13,7 +13,7 @@
  */
 
 #include "dynamic.h"
-
+#include "dynamic_memory.h"
 /**
  *
  * @param[in, out] dyn element which is initialized as a dictionary
@@ -26,12 +26,12 @@ trilean dyn_set_dict (dyn_c* dyn, dyn_ushort length)
 {
     dyn_free(dyn);
 
-    dyn_dict *dict = (dyn_dict*) malloc(sizeof(dyn_dict));
+    dyn_dict *dict = (dyn_dict*) alloc_mem(sizeof(dyn_dict));
 
     if (dict) {
         DYN_INIT(&dict->value);
         if (dyn_set_list_len(&dict->value, length)) {
-            dict->key = (dyn_str*) malloc(length * sizeof(dyn_str*));
+            dict->key = (dyn_str*) alloc_mem(length * sizeof(dyn_str*));
             if (dict->key) {
                 dyn_ushort i;
                 for (i=0; i<length; ++i)
@@ -43,7 +43,7 @@ trilean dyn_set_dict (dyn_c* dyn, dyn_ushort length)
             }
             dyn_free(&dict->value);
         }
-        free(dict);
+        free_mem(dict);
     }
 
     return DYN_FALSE;
@@ -72,17 +72,10 @@ dyn_c* dyn_dict_insert(dyn_c* dict, dyn_const_str key, dyn_c* value)
 
     if (DYN_DICT_LENGTH(ptr) == space) {
         dyn_dict_resize(dict, space + DICT_DEFAULT);
-        /*if (dyn_list_resize(&dyn->data.dict->value, space)) {
-            dyn->data.dict->key = (dyn_str*) realloc(dyn->data.dict->key, space * sizeof(dyn_str*));
-            if (dyn->data.dict->key) {
-                for (i=space - DICT_DEFAULT; i<space; ++i)
-                    dyn->data.dict->key[i] = NULL;
-            }
-        }*/
     }
 
     i = DYN_DICT_LENGTH(ptr);
-    ptr->key[i] = (dyn_str) malloc(dyn_strlen(key)+1);
+    ptr->key[i] = (dyn_str) alloc_mem(dyn_strlen(key)+1);
     if (ptr->key[i]) {
         dyn_strcpy(ptr->key[i], key);
         DYN_DICT_LENGTH(ptr)++;
@@ -113,7 +106,7 @@ trilean dyn_dict_resize(dyn_c* dict, dyn_ushort size)
 
     if (size > space)
         if (dyn_list_resize(&ptr->value, size)) {
-            ptr->key = (dyn_str*) realloc(ptr->key, size * sizeof(dyn_str*));
+            ptr->key = (dyn_str*) realloc_mem(ptr->key, size * sizeof(dyn_str*));
             if (ptr->key) {
                 for (; space<size; ++space)
                     ptr->key[space] = NULL;
@@ -202,7 +195,7 @@ trilean dyn_dict_remove (dyn_c* dict, dyn_const_str key)
     dyn_ushort i = dyn_dict_has_key(dict, key);
 
     if(i) {
-        free(ptr->key[--i]);
+        free_mem(ptr->key[--i]);
         ptr->key[i] = NULL;
         dyn_free(DYN_DICT_GET_I_REF(dict, i));
         ptr->value.data.list->length--;
@@ -232,7 +225,7 @@ void dyn_dict_empty (dyn_c* dict)
 
     dyn_ushort i = DYN_DICT_LENGTH(ptr);
     while (i--) {
-        free(ptr->key[i]);
+        free_mem(ptr->key[i]);
         ptr->key[i] = NULL;
         dyn_free(DYN_DICT_GET_I_REF(dict, i));
     }
@@ -246,8 +239,8 @@ void dyn_dict_free (dyn_c* dict)
 {
     dyn_dict_empty(dict);
     dyn_free(&dict->data.dict->value);
-    free(dict->data.dict->key);
-    free(dict->data.dict);
+    free_mem(dict->data.dict->key);
+    free_mem(dict->data.dict);
 }
 
 /**

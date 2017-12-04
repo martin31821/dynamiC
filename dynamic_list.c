@@ -13,6 +13,7 @@
  */
 
 #include "dynamic.h"
+#include "dynamic_memory.h"
 
 #define LST_CONT(X)   X->data.list->container
 #define LST_SPACE(X)  X->data.list->space
@@ -38,11 +39,11 @@ trilean dyn_set_list_len (dyn_c* dyn, dyn_ushort len)
 {
     dyn_free(dyn);
 
-    dyn_list *list = (dyn_list*) malloc(sizeof(dyn_list));
+    dyn_list *list = (dyn_list*) alloc_mem(sizeof(dyn_list));
 
     if (list) {
 
-        list->container = (dyn_c*) malloc(len * sizeof(dyn_c));
+        list->container = (dyn_c*) alloc_mem(len * sizeof(dyn_c));
 
         if (list->container) {
             list->space = len;
@@ -56,7 +57,7 @@ trilean dyn_set_list_len (dyn_c* dyn, dyn_ushort len)
             dyn->data.list = list;
             return DYN_TRUE;
         }
-        free(list);
+        free_mem(list);
     }
     return DYN_FALSE;
 }
@@ -74,8 +75,8 @@ void dyn_list_free (dyn_c* dyn)
         dyn_free(ptr++);
     }
 
-    free(dyn->data.list->container);
-    free(dyn->data.list);
+    free_mem(dyn->data.list->container);
+    free_mem(dyn->data.list);
 }
 
 /**
@@ -92,7 +93,7 @@ trilean dyn_list_resize (dyn_c* list, dyn_ushort size)
 {
     dyn_list *ptr = list->data.list;
 
-    dyn_c* new_list = (dyn_c*) realloc(ptr->container, size * sizeof(dyn_c));
+    dyn_c* new_list = (dyn_c*) realloc_mem(ptr->container, size * sizeof(dyn_c));
 
     if (new_list) {
         ptr->container = new_list;

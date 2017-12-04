@@ -13,6 +13,7 @@
  */
 
 #include "dynamic.h"
+#include "dynamic_memory.h"
 #include <stdio.h>
 
 
@@ -30,7 +31,7 @@
 void dyn_free (dyn_c* dyn)
 {
     switch (DYN_TYPE(dyn)) {
-        case STRING:    free(dyn->data.str);
+        case STRING:    free_mem(dyn->data.str);
                         break;
 #ifdef S2_SET
         case SET:
@@ -129,7 +130,7 @@ trilean dyn_set_string (dyn_c* dyn, dyn_const_str v)
 {
     dyn_free(dyn);
 
-    dyn->data.str = (dyn_str) malloc(dyn_strlen((dyn_str)v)+1);
+    dyn->data.str = (dyn_str) alloc_mem(dyn_strlen((dyn_str)v)+1);
 
     if (dyn->data.str) {
         dyn->type = STRING;
@@ -346,7 +347,9 @@ dyn_str dyn_get_string (const dyn_c* dyn)
 {
     if (DYN_IS_REFERENCE(dyn))
         dyn = dyn->data.ref;
-
+    
+    // Do we want to keep a malloc here? 
+    // Removing/Changing this would imply exporting a free function.
     dyn_str string = (dyn_str) malloc(dyn_string_len(dyn) + 1);
     if (string) {
         string[0] = '\0';

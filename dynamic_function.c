@@ -13,6 +13,7 @@
  */
 
 #include "dynamic.h"
+#include "dynamic_memory.h"
 
 trilean dyn_set_fct(dyn_c* dyn, void *ptr, const dyn_ushort type, dyn_const_str info)
 {
@@ -21,14 +22,14 @@ trilean dyn_set_fct(dyn_c* dyn, void *ptr, const dyn_ushort type, dyn_const_str 
     dyn->type = FUNCTION;
 
     //dyn->data.fct = NULL;
-    dyn->data.fct = (dyn_fct*) malloc(sizeof(dyn_fct));
+    dyn->data.fct = (dyn_fct*) alloc_mem(sizeof(dyn_fct));
 
     if (dyn->data.fct) {
         dyn->data.fct->type = type;
         dyn->data.fct->info = NULL;
         if (info!=NULL) {
             if (dyn_strlen(info)) {
-                dyn->data.fct->info = (dyn_str) malloc( dyn_strlen(info)+1 );
+                dyn->data.fct->info = (dyn_str) alloc_mem( dyn_strlen(info)+1 );
                 if (dyn->data.fct->info) {
                     dyn_strcpy( dyn->data.fct->info, info );
                 }
@@ -41,7 +42,7 @@ trilean dyn_set_fct(dyn_c* dyn, void *ptr, const dyn_ushort type, dyn_const_str 
         }
         else
         {
-            dyn_char* proc = (dyn_char*) malloc(type);
+            dyn_char* proc = (dyn_char*) alloc_mem(type);
 
             if (proc) {
                 dyn_char* code = ptr;
@@ -55,7 +56,7 @@ trilean dyn_set_fct(dyn_c* dyn, void *ptr, const dyn_ushort type, dyn_const_str 
         }
     }
 
-    free(dyn->data.fct);
+    free_mem(dyn->data.fct);
 
     return DYN_FALSE;
 }
@@ -63,13 +64,13 @@ trilean dyn_set_fct(dyn_c* dyn, void *ptr, const dyn_ushort type, dyn_const_str 
 void dyn_fct_free(dyn_c* dyn)
 {
     if (dyn->data.fct->type > DYN_FCT_PROC) {
-        free(dyn->data.fct->ptr);
+        free_mem(dyn->data.fct->ptr);
     }
 
     if (dyn->data.fct->info != NULL)
-        free(dyn->data.fct->info);
+        free_mem(dyn->data.fct->info);
 
-    free(dyn->data.fct);
+    free_mem(dyn->data.fct);
 }
 
 trilean dyn_fct_copy(const dyn_c* dyn, dyn_c* copy)

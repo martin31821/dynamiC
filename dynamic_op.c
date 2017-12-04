@@ -13,6 +13,7 @@
  */
 
 #include "dynamic.h"
+#include "dynamic_memory.h"
 
 #define max_type(A, B) (DYN_TYPE(A) > DYN_TYPE(B)) ? DYN_TYPE(A) : DYN_TYPE(B)
 
@@ -138,13 +139,13 @@ trilean dyn_op_add (dyn_c* dyn1, dyn_c* dyn2)
                           goto LABEL_OK;
             case STRING:  {
                 if (DYN_TYPE(dyn1) == STRING) {
-                    dyn1->data.str = (dyn_str) realloc(dyn1->data.str, dyn_strlen(dyn1->data.str) +
+                    dyn1->data.str = (dyn_str) realloc_mem(dyn1->data.str, dyn_strlen(dyn1->data.str) +
                                                                       dyn_string_len(dyn2) + 1 );
                     dyn_string_add(dyn2, dyn1->data.str);
                 }
                 else {
                     tmp.type = STRING;
-                    tmp.data.str = (dyn_str) malloc(dyn_string_len(dyn1) + dyn_string_len(dyn2) + 1);
+                    tmp.data.str = (dyn_str) alloc_mem(dyn_string_len(dyn1) + dyn_string_len(dyn2) + 1);
                     tmp.data.str[0]='\0';
                     dyn_string_add(dyn1, tmp.data.str);
                     dyn_string_add(dyn2, tmp.data.str);
@@ -293,7 +294,7 @@ trilean dyn_op_mul (dyn_c* dyn1, dyn_c* dyn2)
                     case 1: break;
                     default: {
                         dyn_ushort len = dyn_strlen(dyn1->data.str);
-                        dyn1->data.str = (dyn_str) realloc(dyn1->data.str, len * i + 1);
+                        dyn1->data.str = (dyn_str) realloc_mem(dyn1->data.str, len * i + 1);
 
                         dyn_str c = &dyn1->data.str[len];
                         dyn_ushort j;
